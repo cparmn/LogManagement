@@ -1,0 +1,15 @@
+#/bin/bash
+#Check Disk Space
+SPACE=$(df -h |grep /dev/sdb |  awk '{print $5}' |  cut -d "%" -f1)
+if [[ $SPACE -gt 85 ]]
+then
+	df -h |grep /dev/sdb |  awk '{print "Syslog Storage: \nUsed: "$3 "\nAvailable: "$4 "\nPercentage: " $5}' | mutt -e 'my_hdr From:rsyslog <rsyslog@domain.com>' -s "Current syslog /data storage" isdatasecurity@domain.com
+	while [[ $SPACE -gt 85 ]]
+	do
+		df -h |grep /dev/sdb |  awk '{print "Syslog Storage: \nUsed: "$3 "\nAvailable: "$4 "\nPercentage: " $5}' | mutt -e 'my_hdr From:rsyslog <rsyslog@domain.com>' -s "Current syslog /data storage" isdatasecurity@domain.com
+		sleep 5m
+		SPACE=$(df -h |grep /dev/sdb |  awk '{print $5}' |  cut -d "%" -f1)
+
+	done
+fi
+
